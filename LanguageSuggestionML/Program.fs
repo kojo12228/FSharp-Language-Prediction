@@ -2,38 +2,42 @@
 
 open System
 
-open Microsoft.ML
-
 open LanguageParser
 open MathNet.Numerics.LinearAlgebra
 
+let averagesGivenLanguage languageID =
+    let languageMap = userLanguageMap()
+    [ for userID in languageMap.[languageID] ->
+        predictUserRatings userID |> Vector.toList ]
+    |> matrix
+    |> Matrix.toColSeq
+    |> Seq.map (Seq.average)
+    |> Seq.zip idLanguages
+    |> Seq.map (fun ((_, lang), pred) -> lang, pred)
+
 [<EntryPoint>]
 let main argv =
-    //printfn "Hello World from F#!"
-    //trainModel()
-    //idLanguages |> printfn "%A"
     idLanguages |> printfn "%A"
-
-    //let x = svd
-    //x.S.Count |> printfn "%A"
-
-    //predictRating 8 3 |> printfn "C# Prediction: %f"
-    //for i in predictUserRatings 8 do
-    //    printfn "%f" i
 
     decomposedRatingMatrix.RowCount
     |> printfn "%d"
 
-    let languageMap = userLanguageMap()
-    let languageAverage =
-        [ for userID in languageMap.[16] ->
-          predictUserRatings userID |> Vector.toList ]
-        |> matrix
-        |> Matrix.toColSeq
-        |> Seq.map (Seq.average)
-        |> Seq.zip idLanguages
-    for x in languageAverage do
-        printfn "%A" x
-
+    let mutable csv =
+        "Pred Lang," +
+        String.Join(',',[ for id, lang in idLanguages -> lang]) +
+        "\n"
+    let idLangMap = Map.ofList idLanguages
+    for langID in 0 .. 38 do
+        if langID <> 23 then
+            let averages =
+                averagesGivenLanguage langID
+                |> Seq.map snd
+            let rowString =
+                idLangMap.[langID] + "," +
+                 String.Join(',',averages) +
+                 "\n"
+            csv <- csv + rowString
+    printfn "%s" csv
+    System.IO.File.WriteAllLines("desired_results.csv", [csv])
 
     0 // return an integer exit code

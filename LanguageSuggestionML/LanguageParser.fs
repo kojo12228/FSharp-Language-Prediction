@@ -25,7 +25,7 @@ let survey = new Survey()
 let idLanguages =
     let languages =
         seq { for row in survey.Rows do
-              yield! row.LanguageWorkedWith.Split(";") }
+              yield! row.LanguageDesireNextYear.Split(";") }
         |> Set.ofSeq
         |> Set.toList
         |> List.sort
