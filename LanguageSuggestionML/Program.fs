@@ -19,7 +19,7 @@ let averagesGivenLanguage languageID =
 let main argv =
     idLanguages |> printfn "%A"
 
-    decomposedRatingMatrix.RowCount
+    approxRatingMatrix.RowCount
     |> printfn "%d"
 
     let mutable csv =
@@ -28,7 +28,7 @@ let main argv =
         "\n"
     let idLangMap = Map.ofList idLanguages
     for langID in 0 .. 38 do
-        if langID <> 23 then
+        if langID <> 23 then //Language "NA"
             let averages =
                 averagesGivenLanguage langID
                 |> Seq.map snd
@@ -38,6 +38,6 @@ let main argv =
                  "\n"
             csv <- csv + rowString
     printfn "%s" csv
-    System.IO.File.WriteAllLines("desired_results.csv", [csv])
+    System.IO.File.WriteAllLines(@"results/desired_results.csv", [csv])
 
     0 // return an integer exit code

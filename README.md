@@ -4,7 +4,7 @@ This project uses matrix factorization (singular value decomposition) to predict
 
 ## Simple Insights
 
-The initial idea of the project was to try and predict what language someone should learn based on the languages they already know.
+The initial idea of the project was to try and predict what language someone should learn based on the languages they already know. The hope was to use the relatively new ML.NET to perform the classification and prediction, but it did not prove intuitive with F# [(tutorial in C#)](https://github.com/dotnet/machinelearning-samples/tree/master/samples/csharp/getting-started/MatrixFactorization_MovieRecommendation). Instead, upon some initial research, using Singular Value Decomposition and Math.NET Numerics seemed like a viable alternative.
 
 The approximation used a rank 20 singular value matrix, then averaged the predicted values for each language for users that worked with/desired one language. Only IDs below 1000 were used. Included in the [results](LanguageSuggestionML/results) directory are the CSVs for worked with languages and desired next year languages.
 
@@ -19,5 +19,7 @@ For languages that fewer survey participants knew/wanted to work with, the predi
 ## Using the Project
 
 Download the dataset from [Stack Overflow](https://insights.stackoverflow.com/survey) (expected to be in the root of the directory).
+
+The project can be easily adapted to work with any of the annual surveys, just take note of the language field (`row.LanguageDesireNextYear` in the 2018 survey, for example) and the separator (`;`).
 
 Requires the .NET Core SDK. Visual Studio or Visual Studio Code + Ionide would be the recommended ways of directly editing the project.

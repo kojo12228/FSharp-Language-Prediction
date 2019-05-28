@@ -3,22 +3,14 @@
 open FSharp.Data
 open MathNet.Numerics.LinearAlgebra
 
-//let fileLocation = @"survey_results_public.csv"
-
 type Survey = CsvProvider<"survey_results_public.csv">
-
-//type LanguageRating(userID, languageID, label) =
-//    new() = LanguageRating(0,0,0)
-//    member x.userID = userID
-//    member x.languageID = languageID
-//    member x.Label = label
 
 type LanguageRating =
     { userID: int
       languageID: int
       Label: int }
 
-let users = 1000
+let users = 10000
 
 let survey = new Survey()
 
@@ -68,21 +60,17 @@ let ratingMatrix =
     |> matrix
 
 let svd =
-    for i, row in Matrix.toRowSeqi ratingMatrix do
-        if i > 70 && i < 80 then
-            printfn "%A" row
-    
     ratingMatrix
     |> Matrix.svd
 
-let decomposedRatingMatrix =
+let approxRatingMatrix =
     let sigmaMatrix =
         svd.W
         |> Matrix.mapi (fun i j x -> if i = j && i < 20 then x else 0.)
     svd.U * sigmaMatrix * svd.VT
 
 let predictRating userID languageID =
-    decomposedRatingMatrix.[userIDMap.[userID], languageID]
+    approxRatingMatrix.[userIDMap.[userID], languageID]
 
 let predictUserRatings userID =
-    decomposedRatingMatrix.Row(userIDMap.[userID])
+    approxRatingMatrix.Row(userIDMap.[userID])
